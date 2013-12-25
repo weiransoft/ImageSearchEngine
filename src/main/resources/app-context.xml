@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+          http://www.springframework.org/schema/beans/spring-beans-3.1.xsd   
+          http://www.springframework.org/schema/context   
+          http://www.springframework.org/schema/context/spring-context-3.1.xsd   
+          http://www.springframework.org/schema/aop   
+          http://www.springframework.org/schema/aop/spring-aop-3.1.xsd   
+          http://www.springframework.org/schema/mvc 
+          http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+          http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       "
+	default-autowire="byName">
+	<tx:annotation-driven />
+
+
+	<!-- Drives transactions using local JPA APIs -->
+	<!-- <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> 
+		<property name="entityManagerFactory" ref="entityManagerFactory" /> </bean> 
+		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"> 
+		<property name="persistenceUnitName" value="forceDatabase" /> </bean> -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- one of the properties available; the maximum file size in bytes -->
+		<property name="maxUploadSize" value="500000" />
+	</bean>
+	<!-- Scans within the base package of the application for @Components to 
+		configure as beans -->
+
+	<context:component-scan base-package="com.weiransoft" />
+	<context:annotation-config />
+	<mvc:annotation-driven />
+
+
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>application/x-www-form-urlencoded;charset=UTF-8</value>
+							<value>multipart/form-data;charset=UTF-8</value>
+							<value>text/plain;charset=UTF-8</value>
+							<value>application/xml;charset=UTF-8</value>
+						</list>
+					</property>
+					<property name="partConverters">
+						<list>
+							<bean
+								class="org.springframework.http.converter.StringHttpMessageConverter">
+								<property name="supportedMediaTypes">
+									<list>
+										<value>text/html;charset=UTF-8</value>
+										<value>text/plain;charset=UTF-8</value>
+										<value>multipart/form-data;charset=UTF-8</value>
+										<value>application/xml;charset=UTF-8</value>
+									</list>
+								</property>
+							</bean>
+							<bean
+								class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+							<bean
+								class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+							<bean
+								class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+							<bean
+								class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+							<bean
+								class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+						</list>
+					</property>
+				</bean>
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/html;charset=UTF-8</value>
+							<value>text/plain;charset=UTF-8</value>
+							<value>multipart/form-data;charset=UTF-8</value>
+							<value>application/xml;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+</beans>
