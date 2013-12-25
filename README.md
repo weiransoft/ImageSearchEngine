@@ -9,6 +9,16 @@ It's an image similarity search Engine built on top of Lire.  The images and the
 
 If you're familiar spring RESTTempleate you can refer my test case in the code.
 
+#Useage
+
+Set index file path:
+
+```Java
+IndexConstant {
+        public static final String INDEX_DATA_FILE_PATH = "c:\\data";//Modify this path
+        
+```
+
 ## Index Image
 
 ```Java
