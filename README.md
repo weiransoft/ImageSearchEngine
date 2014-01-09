@@ -30,7 +30,7 @@ public class RestIndexImageTest {
 	@Test
 	public void testFileUpload() {
 
-		String url = "http://localhost:8081/baotuSearch/indexProductImage";
+		String url = "http://localhost:8081/ImageSearchEngine/indexProductImage";
 
 		Resource resource = new ClassPathResource("image/psbe.jpg");
 
@@ -56,7 +56,7 @@ public class RestSearchImageTest {
 	@Test
 	public void testSearchProductImage() {
 
-		String url = "http://localhost:8081/baotuSearch/searchProductImage";
+		String url = "http://localhost:8081/ImageSearchEngine/searchProductImage";
 
 		Resource resource = new ClassPathResource("image/psbe.jpg");
 
