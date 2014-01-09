@@ -15,7 +15,7 @@ Set index file path:
 
 ```Java
 IndexConstant {
-        public static final String INDEX_DATA_FILE_PATH = "c:\\data";//Modify this path
+        public static final String INDEX_DATA_FILE_PATH = "indexData";//Modify this path
         
 ```
 
