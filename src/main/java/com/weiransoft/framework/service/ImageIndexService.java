@@ -1,18 +1,16 @@
 package com.weiransoft.framework.service;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-
+import com.weiransoft.framework.constant.VaildationUtils;
+import com.weiransoft.framework.lire.CombinedIndexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.weiransoft.framework.constant.VaildationUtils;
-import com.weiransoft.framework.lire.CombinedIndexer;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 @Service
 @Scope("prototype")
@@ -20,7 +18,8 @@ public class ImageIndexService {
 
 	CombinedIndexer combinedIndexer;
 	private static final Logger logger = LoggerFactory.getLogger(ImageIndexService.class);
-
+    @Autowired
+    FileSaveService fileSaveService;
 	public void indexImageFile(String imageUrl, String keyWords, String productUrl) {
 
 		try {
@@ -28,11 +27,7 @@ public class ImageIndexService {
 				combinedIndexer = new CombinedIndexer();
 			}
 			if (VaildationUtils.VaildateUrl(imageUrl)) {
-				URL url = new URL(imageUrl);
-				// 实列一个URLconnection对象，用来读取和写入此 URL 引用的资源
-				URLConnection con = url.openConnection();
-				// 获取一个输入流
-				InputStream is = con.getInputStream();
+				InputStream is = fileSaveService.getInputStreamFromWeb(imageUrl);
 				combinedIndexer.index(imageUrl, is, keyWords, productUrl);
 			} else {
 				FileInputStream stream = new FileInputStream(imageUrl);

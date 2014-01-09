@@ -10,7 +10,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.weiransoft.framework.constant.IndexConstant;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 @Service
 public class FileSaveService {
@@ -40,10 +44,23 @@ public class FileSaveService {
 		return imageName;
 	}
 
-	private String calculateDestinationDirectory() {
-		// TODO:add logical to create different sub path
-		String result = IndexConstant.INDEX_UPLOAD_FILE_PATH;
-		result += "/";
+    public InputStream getInputStreamFromWeb(String imageUrl) {
+        URL url = null;
+        InputStream is = null;
+        try {
+            url = new URL(imageUrl);
+            URLConnection con = url.openConnection();
+            is = con.getInputStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return is;
+    }
+
+    private String calculateDestinationDirectory() {
+        // TODO:add logical to create different sub path
+        String result = IndexConstant.INDEX_UPLOAD_FILE_PATH;
+        result += "/";
 
 		return result;
 	}

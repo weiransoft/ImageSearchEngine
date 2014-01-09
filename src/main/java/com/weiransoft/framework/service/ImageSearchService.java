@@ -32,22 +32,23 @@ import com.weiransoft.framework.constant.IndexConstant;
 public class ImageSearchService {
 	public static final int MAX_RESULTS = 20;
 
-	@SuppressWarnings("deprecation")
-	public List<IndexImage> search(InputStream reference, String keyWords) throws IOException {
-		IndexReader filter;
-		List<IndexImage> result = null;
-		ImageSearcher searcher;
-		Map<String, IndexImage> indexImageMap = new HashMap<String, IndexImage>();
-		BufferedImage image;
-		try {
-			image = ImageIO.read(reference);
-			if (StringUtils.isNotEmpty(keyWords)) {
-				filter = new FilteredIndexReader(keyWords, MAX_RESULTS);
-			} else {
-				filter = IndexReader.open(FSDirectory.open(new File(IndexConstant.INDEX_DATA_FILE_PATH)));
-			}
-			searcher = ImageSearcherFactory.createCEDDImageSearcher(MAX_RESULTS);
-			ImageSearchHits hits = searcher.search(image, filter);
+    @SuppressWarnings("deprecation")
+    public List<IndexImage> search(InputStream reference, String keyWords) throws IOException {
+        IndexReader filter;
+        List<IndexImage> result = null;
+        ImageSearcher searcher;
+        Map<String, IndexImage> indexImageMap = new HashMap<String, IndexImage>();
+        BufferedImage image=null;
+        try {
+            if (reference != null)
+                image = ImageIO.read(reference);
+            if (StringUtils.isNotEmpty(keyWords)) {
+                filter = new FilteredIndexReader(keyWords, MAX_RESULTS);
+            } else {
+                filter = IndexReader.open(FSDirectory.open(new File(IndexConstant.INDEX_DATA_FILE_PATH)));
+            }
+            searcher = ImageSearcherFactory.createCEDDImageSearcher(MAX_RESULTS);
+            ImageSearchHits hits = searcher.search(image, filter);
 
 			if (hits.length() > 0) {
 				for (int i = 0; i < hits.length(); i++) {

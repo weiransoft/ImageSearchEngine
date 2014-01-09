@@ -20,7 +20,7 @@ public class RestSearchImageTest {
 	@Test
 	public void testSearchProductImage() {
 
-		String url = "http://localhost:8081/baotuSearch/searchProductImage";
+		String url = "http://localhost:8081/ImageSearchEngine/searchProductImage";
 
 		Resource resource = new ClassPathResource("image/psbe.jpg");
 

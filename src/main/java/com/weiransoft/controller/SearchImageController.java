@@ -1,8 +1,11 @@
 package com.weiransoft.controller;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.weiransoft.framework.constant.VaildationUtils;
+import com.weiransoft.framework.service.FileSaveService;
+import com.weiransoft.framework.service.ImageSearchService;
+import com.weiransoft.framework.service.IndexImage;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.weiransoft.framework.constant.VaildationUtils;
-import com.weiransoft.framework.service.FileSaveService;
-import com.weiransoft.framework.service.ImageSearchService;
-import com.weiransoft.framework.service.IndexImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Handles requests for the indexing Product's Image.
@@ -33,13 +33,14 @@ public class SearchImageController {
 	@Autowired
 	FileSaveService fileSaveService;
 
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/searchProductImage", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
-	public @ResponseBody
-	String searchProductImage(@RequestParam(value = "imageUrl") String imageUrl, @RequestParam MultipartFile imagefile, @RequestParam(value = "keywords") String keywords) {
-		logger.info("requesting searchProductImage");
+    /**
+     * Simply selects the home view to render by returning its name.
+     */
+    @RequestMapping(value = "/searchProductImage", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
+    public
+    @ResponseBody
+    String searchProductImage(@RequestParam(value = "imageUrl") String imageUrl, @RequestParam MultipartFile imageFile, @RequestParam(value = "keywords") String keywords) {
+        logger.info("requesting searchProductImage");
 
 		if (StringUtils.isEmpty(imageUrl) && (imagefile == null || imagefile.isEmpty())) {
 			return "<error>Empty imagefile or invalid image URL </error>";
@@ -48,15 +49,21 @@ public class SearchImageController {
 			return "<error>Invaild imageUrl</error>";
 		}
 
-		try {
-			List<IndexImage> imageList = ImageSearchService.search(imagefile.getInputStream(), keywords);
-			if (imageList != null && !imageList.isEmpty()) {
-				XStream xstream = new XStream(new StaxDriver());
-				return xstream.toXML(imageList);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            InputStream inputStream = null;
+            if (imageFile != null)
+                inputStream = imageFile.getInputStream();
+            else if (StringUtils.isNotEmpty(imageUrl))
+                inputStream = fileSaveService.getInputStreamFromWeb(imageUrl);
+
+            List<IndexImage> imageList = imageSearchService.search(inputStream, keywords);
+            if (imageList != null && !imageList.isEmpty()) {
+                XStream xstream = new XStream(new StaxDriver());
+                return xstream.toXML(imageList);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 		return "<msg>Not Found</msg>";
 
